@@ -1,5 +1,6 @@
 package org.eck;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -63,7 +64,8 @@ public class Gas {
         return fields;
     }
 
-    public static Gas gas(Object object) {
+    @SafeVarargs
+    public static Gas gas(Object object, Class<? extends Annotation> ... filters) {
         Gas gas = new Gas();
         gas.setMe(object);
 
@@ -71,6 +73,23 @@ public class Gas {
         Field[] fields = clazz.getDeclaredFields();
 
         for (Field field : fields) {
+
+            boolean skip = true;
+
+            if(filters == null || filters.length == 0) {
+                skip = false;
+            } else {
+                for(Class<? extends Annotation> annotationClass : filters) {
+                    if(field.isAnnotationPresent(annotationClass)) {
+                        skip = false;
+                    }
+                }
+            }
+
+            if(skip) {
+                continue;
+            }
+
             String name = field.getName();
             String _name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
 

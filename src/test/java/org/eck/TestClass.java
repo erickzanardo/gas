@@ -1,7 +1,10 @@
 package org.eck;
 
 public class TestClass {
+    @Bla
     private Long id;
+    @Bla
+    @Ble
     private String name;
     private String password;
 
